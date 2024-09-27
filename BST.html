@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Search Tree Search Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        #tree-container {
+            text-align: center;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .node {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #3498db;
+            color: white;
+            line-height: 40px;
+            position: relative;
+            transition: background-color 0.5s;
+        }
+        .link {
+            position: absolute;
+            width: 2px;
+            background-color: #2c3e50;
+            transition: height 0.5s, transform 0.5s;
+        }
+        .container {
+            position: relative;
+            display: inline-block;
+            margin: 20px;
+        }
+        #controls {
+            margin-top: 20px;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            margin-right: 10px;
+            width: 250px;
+            border-radius: 5px;
+        }
+        button {
+            padding: 15px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #27ae60;
+        }
+        #message, #complexity, #iterations {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        #complexity {
+            color: #34495e;
+        }
+        #iterations {
+            color: #8e44ad;
+        }
+    </style>
+</head>
+<body>
+    <h1>Binary Search Tree Search Simulation</h1>
+    <div id="tree-container"></div>
+    <div id="controls">
+        <input type="text" id="node-values" placeholder="Enter values separated by commas">
+        <button onclick="buildTree()">Build Tree</button>
+        <input type="number" id="search-value" placeholder="Enter value to search">
+        <button onclick="searchTree()">Search</button>
+    </div>
+    <div id="message"></div>
+    <div id="iterations"></div>
+    <div id="complexity"></div>
+
+    <script>
+        class Node {
+            constructor(value) {
+                this.value = value;
+                this.left = null;
+                this.right = null;
+            }
+        }
+
+        let root = null;
+
+        function buildTree() {
+            const values = document.getElementById('node-values').value.split(',').map(Number);
+            if (values.some(isNaN)) {
+                alert('Please enter valid numbers separated by commas');
+                return;
+            }
+
+            root = null;
+            values.forEach(value => {
+                root = insertIntoTree(root, value);
+            });
+
+            displayTree(root, document.getElementById('tree-container'));
+            displayComplexity(values.length);
+        }
+
+        function insertIntoTree(node, value) {
+            if (!node) {
+                return new Node(value);
+            }
+            if (value < node.value) {
+                node.left = insertIntoTree(node.left, value);
+            } else {
+                node.right = insertIntoTree(node.right, value);
+            }
+            return node;
+        }
+
+        function displayTree(node, container) {
+            container.innerHTML = '';
+            if (!node) return;
+            const nodeElement = document.createElement('div');
+            nodeElement.className = 'node';
+            nodeElement.innerHTML = `<span class="value">${node.value}</span>`;
+
+            const nodeContainer = document.createElement('div');
+            nodeContainer.className = 'container';
+            nodeContainer.appendChild(nodeElement);
+
+            container.appendChild(nodeContainer);
+
+            if (node.left || node.right) {
+                const levelContainer = document.createElement('div');
+                levelContainer.className = 'level';
+                container.appendChild(levelContainer);
+
+                if (node.left) {
+                    const leftContainer = document.createElement('div');
+                    leftContainer.className = 'container';
+                    levelContainer.appendChild(leftContainer);
+                    displayTree(node.left, leftContainer);
+                }
+
+                if (node.right) {
+                    const rightContainer = document.createElement('div');
+                    rightContainer.className = 'container';
+                    levelContainer.appendChild(rightContainer);
+                    displayTree(node.right, rightContainer);
+                }
+            }
+        }
+
+        function searchTree() {
+            const value = parseInt(document.getElementById('search-value').value);
+            const message = document.getElementById('message');
+            const iterationsDiv = document.getElementById('iterations');
+            message.textContent = '';
+            iterationsDiv.textContent = '';
+
+            if (isNaN(value)) {
+                message.textContent = 'Please enter a valid number.';
+                return;
+            }
+
+            let currentNode = root;
+            let found = false;
+            const path = [];
+            let iteration = 0;
+
+            while (currentNode) {
+                path.push(currentNode);
+                iteration++;
+                if (currentNode.value === value) {
+                    found = true;
+                    break;
+                }
+                currentNode = value < currentNode.value ? currentNode.left : currentNode.right;
+            }
+
+            animateTraversal(path, found, value, iteration);
+        }
+
+        function animateTraversal(path, found, value, totalIterations) {
+            const nodes = document.querySelectorAll('.node');
+            let index = 0;
+
+            function highlightNextNode() {
+                if (index < path.length) {
+                    const nodeElement = Array.from(nodes).find(node => node.textContent.trim() == path[index].value);
+                    nodeElement.style.backgroundColor = '#f39c12';
+                    
+                    setTimeout(() => {
+                        if (index > 0) {
+                            const prevNodeElement = Array.from(nodes).find(node => node.textContent.trim() == path[index - 1].value);
+                            prevNodeElement.style.backgroundColor = '#3498db';
+                        }
+                        index++;
+                        highlightNextNode();
+                    }, 1000);
+                } else if (found) {
+                    const lastNodeElement = Array.from(nodes).find(node => node.textContent.trim() == path[path.length - 1].value);
+                    lastNodeElement.style.backgroundColor = '#2ecc71';
+                    document.getElementById('message').textContent = `Value ${value} found!`;
+                } else {
+                    document.getElementById('message').textContent = `Value ${value} not found in the tree.`;
+                }
+            }
+
+            document.getElementById('iterations').textContent = `Iterations: ${totalIterations}`;
+            highlightNextNode();
+        }
+
+        function displayComplexity(n) {
+            const complexityDiv = document.getElementById('complexity');
+            const timeComplexity = `Time Complexity: O(log n)`;
+            const spaceComplexity = `Space Complexity: O(n)`;
+            complexityDiv.innerHTML = `<strong>${timeComplexity}</strong><br><strong>${spaceComplexity}</strong>`;
+        }
+    </script>
+</body>
+</html>

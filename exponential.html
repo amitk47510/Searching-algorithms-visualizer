@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exponential Search Visualization</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            width: 250px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, input[type="number"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #array-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 5px;
+            max-width: 90%;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        .array-element {
+            width: 50px;
+            height: 50px;
+            background-color: #4CAF50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            border-radius: 5px;
+            transition: background-color 0.5s;
+            flex-shrink: 0;
+        }
+        .current {
+            background-color: #FFC107;
+        }
+        .found {
+            background-color: #F44336;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #F44336;
+        }
+        #complexity {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #333;
+            background-color: #e8e8e8;
+            padding: 10px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 600px;
+            text-align: left;
+        }
+        @media (max-width: 600px) {
+            .array-element {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            input[type="text"], input[type="number"] {
+                width: 200px;
+            }
+            #complexity {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Exponential Search Visualization</h1>
+    <div id="controls">
+        <input type="text" id="array-input" placeholder="Enter array (comma separated)">
+        <button id="build">Build Array</button>
+        <input type="number" id="target" placeholder="Enter target value">
+        <button id="search">Search</button>
+    </div>
+    <div id="array-container"></div>
+    <div id="complexity">
+        <strong>Time Complexity:</strong> O(log n) <br>
+        <strong>Space Complexity:</strong> O(1)
+    </div>
+    <div id="message"></div>
+
+    <script>
+        let array = [];
+        let iterations = 0;
+        const arrayContainer = document.getElementById('array-container');
+        const buildButton = document.getElementById('build');
+        const searchButton = document.getElementById('search');
+        const arrayInput = document.getElementById('array-input');
+        const targetInput = document.getElementById('target');
+        const message = document.getElementById('message');
+        const complexityDisplay = document.getElementById('complexity');
+
+        function displayArray() {
+            arrayContainer.innerHTML = '';
+            array.forEach((value) => {
+                const div = document.createElement('div');
+                div.className = 'array-element';
+                div.textContent = value;
+                arrayContainer.appendChild(div);
+            });
+        }
+
+        function updateComplexity(time = 'O(log n)', space = 'O(1)') {
+            complexityDisplay.innerHTML = `<strong>Time Complexity:</strong> ${time} <br>
+                                          <strong>Space Complexity:</strong> ${space}`;
+        }
+
+        function binarySearch(low, high, target) {
+            const elements = document.querySelectorAll('.array-element');
+            let found = false;
+
+            function step() {
+                iterations++;
+                if (low <= high) {
+                    const mid = Math.floor((low + high) / 2);
+
+                    elements.forEach((el) => {
+                        el.classList.remove('current');
+                    });
+
+                    elements[mid].classList.add('current');
+
+                    if (array[mid] === target) {
+                        elements[mid].classList.add('found');
+                        message.textContent = `✅ Value ${target} found at index ${mid}! Iterations: ${iterations}`;
+                        found = true;
+                        return;
+                    } else if (array[mid] < target) {
+                        low = mid + 1;
+                    } else {
+                        high = mid - 1;
+                    }
+
+                    setTimeout(step, 1000);
+                } else if (!found) {
+                    message.textContent = `❌ Value ${target} not found in the array. Iterations: ${iterations}`;
+                }
+            }
+
+            step();
+        }
+
+        function animateSearch(target) {
+            const elements = document.querySelectorAll('.array-element');
+            let bound = 1;
+            iterations = 0; 
+
+            function findRange() {
+                iterations++;
+                if (bound < array.length && array[bound] < target) {
+                    elements[bound].classList.add('current');
+                    bound *= 2;
+                    setTimeout(findRange, 1000);
+                } else {
+                    const low = Math.floor(bound / 2);
+                    const high = Math.min(bound, array.length - 1);
+                    elements[low].classList.add('current');
+                    elements[high].classList.add('current');
+                    setTimeout(() => binarySearch(low, high, target), 1000);
+                }
+            }
+
+            findRange();
+        }
+
+        buildButton.addEventListener('click', () => {
+            const arrayInputValue = arrayInput.value;
+
+            array = arrayInputValue.split(',').map(val => parseInt(val.trim())).filter(val => !isNaN(val));
+            if (array.length === 0) {
+                message.textContent = '❗ Please enter a valid array.';
+                return;
+            }
+            array.sort((a, b) => a - b);
+            arrayContainer.innerHTML = '';
+            message.textContent = '';
+            displayArray();
+            updateComplexity();
+        });
+
+        searchButton.addEventListener('click', () => {
+            const target = parseInt(targetInput.value);
+            message.textContent = '';
+
+            if (isNaN(target)) {
+                message.textContent = '❗ Please enter a valid number.';
+                return;
+            }
+
+            iterations = 0;
+            animateSearch(target);
+        });
+        updateComplexity();
+    </script>
+</body>
+</html>

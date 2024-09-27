@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interpolation Search Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            text-align: center;
+            margin: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        #array-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .array-element {
+            width: 50px;
+            height: 50px;
+            margin: 0 5px;
+            background-color: #4CAF50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .current {
+            background-color: #FFC107;
+        }
+        .found {
+            background-color: #F44336;
+        }
+        #controls {
+            margin-top: 20px;
+        }
+        #array-input, #target {
+            padding: 15px;
+            font-size: 16px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        #build, #search {
+            padding: 15px 25px;
+            font-size: 16px;
+            margin: 0 5px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #build:hover, #search:hover {
+            background-color: #2980b9;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #16a085;
+        }
+        #iterations, #complexity {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #34495e;
+        }
+        #iterations {
+            color: #F44336;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interpolation Search Visualization</h1>
+    <div id="controls">
+        <input type="text" id="array-input" placeholder="Enter array (comma separated)">
+        <button id="build">Build Array</button>
+        <input type="number" id="target" placeholder="Enter target value">
+        <button id="search">Search</button>
+    </div>
+    <div id="array-container"></div>
+    <div id="message"></div>
+    <div id="iterations"></div>
+    <div id="complexity">
+        <strong>Time Complexity: O(log n)</strong><br>
+        <strong>Space Complexity: O(1)</strong>
+    </div>
+    <script>
+        let array = [];
+        let iterations = 0;
+        const arrayContainer = document.getElementById('array-container');
+        const buildButton = document.getElementById('build');
+        const searchButton = document.getElementById('search');
+        const arrayInput = document.getElementById('array-input');
+        const targetInput = document.getElementById('target');
+        const message = document.getElementById('message');
+        const iterationsDisplay = document.getElementById('iterations');
+
+        function displayArray() {
+            arrayContainer.innerHTML = '';
+            array.forEach((value) => {
+                const div = document.createElement('div');
+                div.className = 'array-element';
+                div.textContent = value;
+                arrayContainer.appendChild(div);
+            });
+        }
+
+        function animateSearch(target) {
+            const elements = document.querySelectorAll('.array-element');
+            let low = 0;
+            let high = array.length - 1;
+            let found = false;
+            iterations = 0;
+
+            function step() {
+                if (low <= high && array[low] <= target && target <= array[high]) {
+                    const pos = low + Math.floor(((target - array[low]) / (array[high] - array[low])) * (high - low));
+
+                    if (pos < low || pos > high) {
+                        message.textContent = `Value ${target} not found in the array.`;
+                        iterationsDisplay.textContent = `Iterations: ${iterations}`;
+                        return;
+                    }
+
+                    elements.forEach((el) => {
+                        el.classList.remove('current');
+                    });
+
+                    elements[pos].classList.add('current');
+                    iterations++;
+
+                    if (array[pos] === target) {
+                        elements[pos].classList.add('found');
+                        message.textContent = `Value ${target} found at index ${pos}!`;
+                        iterationsDisplay.textContent = `Iterations: ${iterations}`;
+                        found = true;
+                        return;
+                    } else if (array[pos] < target) {
+                        low = pos + 1;
+                    } else {
+                        high = pos - 1;
+                    }
+
+                    setTimeout(step, 1000);
+                } else if (!found) {
+                    message.textContent = `Value ${target} not found in the array.`;
+                    iterationsDisplay.textContent = `Iterations: ${iterations}`;
+                }
+            }
+
+            step();
+        }
+
+        buildButton.addEventListener('click', () => {
+            const arrayInputValue = arrayInput.value;
+            array = arrayInputValue.split(',').map(val => parseInt(val.trim())).filter(val => !isNaN(val));
+            if (array.length === 0) {
+                message.textContent = 'Please enter a valid array.';
+                return;
+            }
+            array.sort((a, b) => a - b);
+            arrayContainer.innerHTML = '';
+            message.textContent = '';
+            iterationsDisplay.textContent = '';
+            displayArray();
+        });
+
+        searchButton.addEventListener('click', () => {
+            const target = parseInt(targetInput.value);
+            if (isNaN(target)) {
+                message.textContent = 'Please enter a valid number.';
+                return;
+            }
+
+            animateSearch(target);
+        });
+    </script>
+</body>
+</html>
