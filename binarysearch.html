@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Array Visualization and Search</title>
+    <title>Binary Search Visualization</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -40,6 +40,9 @@
         }
         #controls {
             margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         #array-input, #target {
             padding: 10px;
@@ -49,7 +52,7 @@
             border-radius: 5px;
             border: 1px solid #ccc;
         }
-        #build, #search {
+        #build, #search, #info-btn {
             padding: 10px 20px;
             font-size: 16px;
             margin: 0 5px;
@@ -58,14 +61,18 @@
             cursor: pointer;
         }
         #build {
-            background-color: #4CAF50;
+            background-color: #2196F3;
             color: white;
         }
         #search {
             background-color: #2196F3;
             color: white;
         }
-        #build:hover, #search:hover {
+        #info-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+        #build:hover, #search:hover, #info-btn:hover {
             opacity: 0.9;
         }
         #message, #complexity {
@@ -76,20 +83,110 @@
         #message {
             color: #F44336;
         }
+
+        #sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            top: 0;
+            right: 0;
+            background-color: #333;
+            color: white;
+            overflow-y: auto;
+            transition: width 0.5s;
+            z-index: 1000;
+        }
+        #sidebar-content {
+            padding: 20px;
+            font-size: 16px;
+        }
+        #sidebar h2 ,h3{
+            color: #f1c40f;
+        }
+        #sidebar p {
+            line-height: 1.6;
+        }
+        #sidebar ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        #sidebar pre {
+            background-color: #444;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        #close-btn {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 36px;
+            color: white;
+            cursor: pointer;
+        }
+
+        @media (min-width: 600px) {
+            #controls {
+                flex-wrap: nowrap;
+            }
+        }
+        #footer{
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 0 5px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: white;
+        }
+        #footer:hover{
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
     <h1>Binary Search Visualization</h1>
     <div id="controls">
         <input type="text" id="array-input" placeholder="Enter array (comma separated)">
-        <button id="build">Build Tree</button>
+        <button id="build">Build Array</button>
         <input type="number" id="target" placeholder="Enter target value">
         <button id="search">Search</button>
+        <button id="info-btn">Search info</button>
     </div>
     <div id="array-container"></div>
     <div id="complexity">Time Complexity: O(log n) | Space Complexity: O(1)</div>
     <div id="message"></div>
 
+    <div id="sidebar">
+        <span id="close-btn">&times;</span>
+        <div id="sidebar-content">
+            <h2>Binary Search Algorithm</h2>
+            <p>Binary Search is a search algorithm that finds the position of a target value within a sorted array. It works by repeatedly dividing in half the portion of the list that could contain the target until the possible location of the target is narrowed down to just one element.</p>
+            <h3>Binary Search Pseudocode:</h3>
+            <pre>
+function binarySearch(arr, target):
+    left = 0
+    right = arr.length - 1
+    while left <= right:
+        mid = floor((left + right) / 2)
+        if arr[mid] == target:
+            return mid
+        else if arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+            </pre>
+            <h3>Time Complexity:</h3>
+            <p>The time complexity for binary search is O(log n) since we are halving the search space with each iteration.</p>
+        </div>
+    </div>
+    <br>
+    <br>
+    <div id="home-btn">
+        <a href="./index.html"><input type="button" value="Go to Home" id="footer"></a>
+    </div>
     <script>
         let array = [];
         const arrayContainer = document.getElementById('array-container');
@@ -99,6 +196,9 @@
         const targetInput = document.getElementById('target');
         const message = document.getElementById('message');
         const complexityDisplay = document.getElementById('complexity');
+        const infoButton = document.getElementById('info-btn');
+        const sidebar = document.getElementById('sidebar');
+        const closeBtn = document.getElementById('close-btn');
 
         function displayArray() {
             arrayContainer.innerHTML = '';
@@ -177,6 +277,16 @@
                 return;
             }
             animateSearch(target);
+        });
+
+        infoButton.addEventListener('click', () => {
+            sidebar.style.width = '360px';
+            infoButton.style.visibility = 'hidden';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            sidebar.style.width = '0';
+            infoButton.style.visibility = 'visible'; 
         });
     </script>
 </body>
