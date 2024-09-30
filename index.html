@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #6e45e2, #88d3ce);
+            background: linear-gradient(135deg, #1d2671, #c33764); 
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -24,18 +24,21 @@
 
         .container {
             text-align: center;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            background-color: rgba(255, 255, 255, 0.1); 
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); 
             width: 90%;
             max-width: 700px;
+            backdrop-filter: blur(10px); 
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: 3rem;
             margin-bottom: 20px;
             font-weight: 600;
+            color: #f9f9f9;
+            letter-spacing: 1.5px;
         }
 
         p {
@@ -50,7 +53,7 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
+            gap: 20px;
         }
 
         li {
@@ -60,26 +63,26 @@
         a {
             display: inline-block;
             text-decoration: none;
-            color: white;
-            background-color: #4caf50;
-            padding: 12px 0;
+            color: #fff;
+            background-color: #ff6f61; 
+            padding: 15px 0;
             width: 100%;
-            border-radius: 30px;
+            border-radius: 50px;
             font-size: 18px;
             font-weight: 500;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); 
         }
 
         a:hover {
-            background-color: #3e8e41;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-            transform: translateY(-3px);
+            background-color: #e85a4f; 
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
         }
 
         @media (max-width: 768px) {
             h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
 
             p {
@@ -95,13 +98,14 @@
 <body>
 
     <div class="container">
-        <h1>Algorithm Visualizations</h1>
+        <h1>Searching Algorithms Visualizer</h1>
+        <p>Explore different search algorithms and understand how they work visually.</p>
         <ul>
-            <li><a href="exponential.html">Exponential Search</a></li>
-            <li><a href="BST.html">BST Search</a></li>
+            <li><a href="linear.html">Linear Search</a></li>
             <li><a href="binarysearch.html">Binary Search</a></li>
             <li><a href="interpolation.html">Interpolation Search</a></li>
-            <li><a href="linear.html">Linear Search</a></li>
+            <li><a href="exponential.html">Exponential Search</a></li>
+            <li><a href="BST.html">BST Search</a></li>
         </ul>
     </div>
 
