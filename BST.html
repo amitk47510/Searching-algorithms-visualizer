@@ -76,6 +76,64 @@
         #iterations {
             color: #8e44ad;
         }
+        
+        #sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            top: 0;
+            right: 0;
+            background-color: #333;
+            color: white;
+            overflow-y: auto;
+            transition: 0.5s;
+            z-index: 1000;
+        }
+        #sidebar-content {
+            padding: 20px;
+            font-size: 16px;
+        }
+        #sidebar h2 {
+            color: #f1c40f;
+        }
+        #sidebar p {
+            line-height: 1.6;
+        }
+        #sidebar ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        #sidebar pre {
+            background-color: #444;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        #close-btn {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 36px;
+            color: white;
+            cursor: pointer;
+        }
+
+        #info-btn {
+            position: relative; 
+            z-index: 1001; 
+        }
+        #footer{
+            padding: 15px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #footer:hover{
+            background-color: #27ae60;  
+        }
     </style>
 </head>
 <body>
@@ -86,10 +144,54 @@
         <button onclick="buildTree()">Build Tree</button>
         <input type="number" id="search-value" placeholder="Enter value to search">
         <button onclick="searchTree()">Search</button>
+        <button id="info-btn">Search info</button>
     </div>
     <div id="message"></div>
     <div id="iterations"></div>
     <div id="complexity"></div>
+
+    <div id="sidebar">
+        <span id="close-btn">&times;</span>
+        <div id="sidebar-content">
+            <h2>What is a Binary Search Tree?</h2>
+            <p>A Binary Search Tree (BST) is a data structure that facilitates fast lookup, insertion, and deletion of items. In a BST, for any given node, the left subtree contains only nodes with values less than the node's value, and the right subtree only contains nodes with values greater than the node's value.</p>
+            <h2>Pseudocode:</h2>
+            <pre>
+Insertion:
+function insert(node, value):
+    if node is null:
+        return new Node(value)
+    if value < node.value:
+        node.left = insert(node.left, value)
+    else:
+        node.right = insert(node.right, value)
+    return node
+
+Searching:
+function search(node, value):
+    if node is null or node.value == value:
+        return node
+    if value < node.value:
+        return search(node.left, value)
+    else:
+        return search(node.right, value)
+
+Traversal (In-order):
+function inOrder(node):
+    if node is not null:
+        inOrder(node.left)
+        visit(node)
+        inOrder(node.right)
+            </pre>
+            <h2>Time Complexity:</h2>
+            <p>The average time complexity for search, insert, and delete operations in a balanced BST is O(log n), while the worst case is O(n).</p>
+        </div>
+    </div>
+    <br>
+    <br>
+    <div id="home-btn">
+        <a href="./index.html"><input type="button" value="Go to Home" id="footer"></a>
+    </div>
 
     <script>
         class Node {
@@ -230,6 +332,20 @@
             const spaceComplexity = `Space Complexity: O(n)`;
             complexityDiv.innerHTML = `<strong>${timeComplexity}</strong><br><strong>${spaceComplexity}</strong>`;
         }
+
+        const sidebar = document.getElementById('sidebar');
+        const infoButton = document.getElementById('info-btn');
+        const closeBtn = document.getElementById('close-btn');
+
+        infoButton.addEventListener('click', () => {
+    sidebar.style.width = '410px';
+    infoButton.style.visibility = 'hidden';
+});
+
+closeBtn.addEventListener('click', () => {
+    sidebar.style.width = '0';
+    infoButton.style.visibility = 'visible'; 
+});
     </script>
 </body>
 </html>
